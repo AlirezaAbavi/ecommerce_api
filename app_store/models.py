@@ -2,12 +2,12 @@ from random import randint
 
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from django.utils.html import format_html
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
-from app_account.models import User
+from app_account.models import User, BrandRating, IPAddress, ProductRating
 
 
 # Create your models here.
@@ -35,6 +35,13 @@ class Brand(models.Model):
     total_rate = models.FloatField(default=0.0)
     status = models.BooleanField(default=True)
     image = models.ImageField(upload_to='images/brands', null=True, blank=True)
+
+    def brand_rate(self) -> float:
+        return BrandRating.objects.filter(brand=self).aggregate(Avg("rating"))["rating__avg"] or 0
+
+    def save(self, **kwargs):
+        self.total_rate = self.brand_rate()
+        return super(Brand, self).save(**kwargs)
 
     def __str__(self):
         return self.title
@@ -73,6 +80,7 @@ class Product(models.Model):
     price = models.FloatField(default=0.00, validators=[MinValueValidator(0.0)])
     sell_price = models.FloatField(default=0.00, validators=[MinValueValidator(0.0)])
     total_rate = models.FloatField(default=0.00)
+    hits = models.ManyToManyField(IPAddress, through='ProductHit', related_name='hits')
     hits_count = models.PositiveIntegerField(default=0, blank=True)
     total_quantity = models.PositiveIntegerField(validators=[MinValueValidator(0)], default=1, blank=False)
     on_sell = models.BooleanField(default=True)
@@ -89,7 +97,12 @@ class Product(models.Model):
     class Meta:
         ordering = ['-status']
 
+    def product_rate(self) -> float:
+        return ProductRating.objects.filter(product=self).aggregate(Avg("rating"))["rating__avg"] or 0
+
     def save(self, **kwargs):
+        self.total_rate = self.product_rate()
+        self.hits_count = self.hits.count() or 0
         self.total_quantity = Quantity.objects.filter(product=self).aggregate(Sum('quantity'))['quantity__sum'] or 0
         if not self.status == 2:
             if self.total_quantity == 0:
@@ -195,3 +208,9 @@ class FilterChoice(models.Model):
     filter = models.ForeignKey(CategoryFilter, on_delete=models.CASCADE, related_name='choices')
     title = models.CharField(max_length=100)
     kw = models.CharField(max_length=200)
+
+
+class ProductHit(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    ip_address = models.ForeignKey(IPAddress, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
