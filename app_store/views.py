@@ -5,7 +5,7 @@ from rest_framework import generics, filters
 
 from app_store.filters import ProductFilter
 from app_store.models import Product, Category, Brand
-from app_store.serializers import ProductListSerializer
+from app_store.serializers import ProductListSerializer, ProductSerializer
 
 
 # Create your views here.
@@ -32,3 +32,18 @@ class ProductList(generics.ListAPIView):
             return queryset
         else:
             raise Http404
+
+
+class ProductDetail(generics.RetrieveAPIView):
+    serializer_class = ProductSerializer
+    lookup_field = 'product_id'
+
+    def get_object(self):
+        product_id = self.kwargs.get('product_id')
+        product = get_object_or_404(Product, product_id=product_id, on_sell=True)
+        ip_address = self.request.user.ip_address
+        if ip_address not in product.hits.all():
+            product.hits.add(ip_address)
+        print(product.hits.count())
+        product.save()
+        return product
