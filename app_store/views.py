@@ -47,7 +47,6 @@ class ProductDetail(generics.RetrieveAPIView):
         ip_address = self.request.user.ip_address
         if ip_address not in product.hits.all():
             product.hits.add(ip_address)
-        print(product.hits.count())
         product.save()
         return product
 
