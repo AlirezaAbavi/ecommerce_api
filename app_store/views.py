@@ -1,4 +1,4 @@
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpRequest
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as third_filters
 from rest_framework import generics, filters, status
@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
-from app_account.models import LikedProduct
+from app_account.models import LikedProduct, ProductRating, BrandRating
 from app_store.filters import ProductFilter
 from app_store.models import Product, Category, Brand, Comment, LikedComment
 from app_store.serializers import ProductListSerializer, ProductSerializer, CommentSerializer
@@ -70,6 +70,27 @@ class ProductComment(generics.ListCreateAPIView):
         product_id = self.kwargs.get('product_id')
         queryset = Comment.objects.filter(status='p', product__product_id=product_id)
         return queryset
+
+
+@permission_classes([IsAuthenticated])
+def rate(request: HttpRequest, id, rating: int):
+    path = request.get_full_path()
+    if '/product/' in path:
+        product = get_object_or_404(Product, product_id=id)
+        ProductRating.objects.filter(product=product, user=request.user).delete()
+        product.rate.create(user=request.user, rating=rating)
+        data = {'rating': product.product_rate()}
+        product.save()
+        return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
+    elif '/brand/' in path:
+        brand = get_object_or_404(Brand, slug=id)
+        BrandRating.objects.filter(brand=brand, user=request.user).delete()
+        brand.rate.create(user=request.user, rating=rating)
+        data = {'rating': brand.brand_rate()}
+        brand.save()
+        return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
+    else:
+        return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
 
 
 @permission_classes([IsAuthenticated])
