@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from app_account.models import LikedProduct, ProductRating, BrandRating
 from app_store.filters import ProductFilter
 from app_store.models import Product, Category, Brand, Comment, LikedComment
-from app_store.serializers import ProductListSerializer, ProductSerializer, CommentSerializer
+from app_store.serializers import ProductListSerializer, ProductSerializer, CommentSerializer, PopularBrandsSerializer
 
 
 # Create your views here.
@@ -36,6 +36,16 @@ class ProductList(generics.ListAPIView):
             return queryset
         else:
             raise Http404
+
+
+class PopularProducts(generics.ListAPIView):
+    queryset = Product.objects.filter(status=True).order_by('total_rate')[:10]
+    serializer_class = ProductListSerializer
+
+
+class PopularBrands(generics.ListAPIView):
+    queryset = Brand.objects.filter(status=True).order_by('total_rate')[:6]
+    serializer_class = PopularBrandsSerializer
 
 
 class ProductDetail(generics.RetrieveAPIView):

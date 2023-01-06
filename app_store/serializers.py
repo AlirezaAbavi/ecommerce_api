@@ -5,7 +5,7 @@ from rest_framework import serializers
 from app_account.models import ProductRating, LikedProduct
 from app_store.models import (
     Product,
-    Colors, Quantity, Detail, PostImage, LikedComment, Comment,
+    Colors, Quantity, Detail, PostImage, LikedComment, Comment, Brand,
 )
 
 
@@ -207,4 +207,20 @@ class CommentSerializer(serializers.ModelSerializer):
             'body',
             'likes',
             'created_at',
+        ]
+
+
+class PopularBrandsSerializer(serializers.ModelSerializer):
+    def get_abs_url(self, obj):
+        request = self.context['request']
+        return request.build_absolute_uri(reverse('store:brand-list', kwargs={'slug': obj.slug}))
+
+    url = serializers.SerializerMethodField('get_abs_url')
+
+    class Meta:
+        model = Brand
+        fields = [
+            'title'
+            'image',
+            'url',
         ]
