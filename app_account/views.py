@@ -6,7 +6,7 @@ from pytz import utc
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from app_account.models import CartItem, Order
+from app_account.models import CartItem, Order, Address
 from app_account.serializers import CartSerializer, CreateItemSerializer, EditItemSerializer, OrderListSerializer, \
     OrderCreateSerializer
 
@@ -62,3 +62,16 @@ class OrderCreate(generics.CreateAPIView):
             return queryset
         else:
             raise HttpResponseForbidden
+
+
+class AddressList(generics.ListCreateAPIView):
+    serializer_class = AddressSerializer
+
+    def get_queryset(self):
+        queryset = Address.objects.filter(user=self.request.user)
+        return queryset
+
+
+class AddressDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AddressSerializer
+    lookup_field = 'id'

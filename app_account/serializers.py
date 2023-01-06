@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from app_store.models import Product, Quantity
-from .models import CartItem, Order
+from .models import CartItem, Order, Address
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -79,6 +79,21 @@ class EditItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['number']
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Address
+        fields = [
+            'user',
+            'full_name',
+            'country',
+            'city',
+            'address',
+            'zip_code',
+        ]
 
 
 class OrderListSerializer(serializers.ModelSerializer):

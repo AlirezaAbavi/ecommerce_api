@@ -9,4 +9,6 @@ urlpatterns = [
     path('cart/<int:id>/', views.EditCart.as_view(), name='edit-cart'),
     path('order/', views.OrderList.as_view(), name='order'),
     path('order/submit', views.OrderCreate.as_view(), name='order-create'),
+    path('address/', views.AddressList.as_view(), name='address-list'),
+    path('address/<int:id>/', views.AddressDetail.as_view(), name='address-detail'),
 ]
