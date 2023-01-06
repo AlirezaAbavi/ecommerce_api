@@ -5,7 +5,7 @@ from app_store.models import Product, Quantity
 from .models import CartItem, Order, Address
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
@@ -17,8 +17,6 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
-#
-#
 class CartSerializer(serializers.ModelSerializer):
     def get_quantity(self, obj):
         q = Quantity.objects.get(id=obj.quantity.id)
@@ -35,7 +33,7 @@ class CartSerializer(serializers.ModelSerializer):
         request = self.context['request']
         return request.build_absolute_uri(reverse('store:detail', kwargs={'product_id': obj.product.product_id}))
 
-    product = ProductSerializer()
+    product = ProductInfoSerializer()
 
     quantity = serializers.SerializerMethodField('get_quantity')
 
