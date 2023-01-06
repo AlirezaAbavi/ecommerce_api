@@ -5,7 +5,7 @@ from rest_framework import serializers
 from app_account.models import ProductRating, LikedProduct
 from app_store.models import (
     Product,
-    Colors, Quantity, Detail, PostImage,
+    Colors, Quantity, Detail, PostImage, LikedComment, Comment,
 )
 
 
@@ -173,4 +173,38 @@ class ProductSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'details',
             'images',
             'hits_count',
+        ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    def get_likes(self, obj):
+        return LikedComment.objects.filter(comment=obj).count()
+
+    def is_comment_liked(self, obj):
+        user = self.context['request'].user
+        try:
+            like = LikedComment.objects.get(comment=obj, user=user)
+            return True
+        except:
+            return False
+
+    def get_product(self, obj):
+        return obj.product.product_id
+
+    likes = serializers.SerializerMethodField('get_likes')
+    is_liked = serializers.SerializerMethodField('is_comment_liked')
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    product = serializers.SerializerMethodField('get_product')
+
+    class Meta:
+        model = Comment
+        fields = [
+            'id',
+            'user',
+            'product',
+            'is_liked',
+            'title',
+            'body',
+            'likes',
+            'created_at',
         ]

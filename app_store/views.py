@@ -2,10 +2,11 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as third_filters
 from rest_framework import generics, filters
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from app_store.filters import ProductFilter
-from app_store.models import Product, Category, Brand
-from app_store.serializers import ProductListSerializer, ProductSerializer
+from app_store.models import Product, Category, Brand, Comment
+from app_store.serializers import ProductListSerializer, ProductSerializer, CommentSerializer
 
 
 # Create your views here.
@@ -47,3 +48,13 @@ class ProductDetail(generics.RetrieveAPIView):
         print(product.hits.count())
         product.save()
         return product
+
+
+class ProductComment(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        product_id = self.kwargs.get('product_id')
+        queryset = Comment.objects.filter(status='p', product__product_id=product_id)
+        return queryset
