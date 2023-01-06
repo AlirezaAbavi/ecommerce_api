@@ -14,4 +14,5 @@ urlpatterns = [
     path('comment/like/<int:comment_id>/', views.like_comment, name='like-comment'),
     path('product/like/<int:product_id>/', views.like_product, name='like-product'),
     path('subcat/<slug:slug>/', views.get_subcategories, name='sub-categories'),
+    path('filters/<slug:cat>/', views.get_category_filters, name='sub-category-filters'),
 ]

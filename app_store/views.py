@@ -135,3 +135,23 @@ def get_subcategories(request, slug):
         return JsonResponse(data)
     except:
         return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def get_category_filters(request, cat):
+    category = get_object_or_404(Category, slug=cat, status=True)
+    data = {}
+    filter = category.filters.all()
+    for anc in category.get_ancestors():
+        tmp = anc.filters.all()
+        filter = filter | tmp
+    for obj in category.filters.all():
+        data.update({obj.title: {}})
+        i = 1
+        for choice in obj.choices.all():
+            data[obj.title].update({i: {
+                'title': choice.title,
+                'kw': choice.kw
+            }})
+            i += 1
+    return JsonResponse(data)
