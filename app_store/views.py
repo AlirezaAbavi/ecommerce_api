@@ -1,8 +1,10 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as third_filters
-from rest_framework import generics, filters
+from rest_framework import generics, filters, status
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 
 from app_store.filters import ProductFilter
 from app_store.models import Product, Category, Brand, Comment
@@ -68,3 +70,23 @@ class ProductComment(generics.ListCreateAPIView):
         product_id = self.kwargs.get('product_id')
         queryset = Comment.objects.filter(status='p', product__product_id=product_id)
         return queryset
+
+
+@api_view(['GET'])
+def get_subcategories(request, slug):
+    try:
+        category = get_object_or_404(Category, slug=slug, status=True)
+        data = {}
+        i = 1
+        for cat in category.get_children():
+            if cat.status:
+                data.update({i: {
+                    'title': cat.title,
+                    'slug': cat.slug,
+                    'url': request.build_absolute_uri(f'/api/store/category/{cat.slug}'),
+                    'image': cat.image.url
+                }})
+                i += 1
+        return JsonResponse(data)
+    except:
+        return Response(data=None, status=status.HTTP_404_NOT_FOUND)
