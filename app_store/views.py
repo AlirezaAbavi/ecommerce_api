@@ -50,6 +50,16 @@ class ProductDetail(generics.RetrieveAPIView):
         return product
 
 
+class ProductSearch(generics.ListAPIView):
+    queryset = Product.objects.filter(status=True)
+    serializer_class = ProductListSerializer
+    filter_backends = [third_filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ProductFilter
+    search_fields = ['title', 'brand__title', '=details__detail']
+    ordering_fields = ['sell_price', 'created_at', 'rate', 'hits']
+    ordering = ['hits_count']
+
+
 class ProductComment(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
