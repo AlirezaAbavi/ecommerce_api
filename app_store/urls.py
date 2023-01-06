@@ -9,5 +9,7 @@ urlpatterns = [
     path('brand/<slug:slug>/', views.ProductList.as_view(), name='brand-list'),
     path('product/<int:product_id>/', views.ProductDetail.as_view(), name='detail'),
     path('comment/<int:product_id>/', views.ProductComment.as_view(), name='comments'),
+    path('comment/like/<int:comment_id>/', views.like_comment, name='like-comment'),
+    path('product/like/<int:product_id>/', views.like_product, name='like-product'),
     path('subcat/<slug:slug>/', views.get_subcategories, name='sub-categories'),
 ]

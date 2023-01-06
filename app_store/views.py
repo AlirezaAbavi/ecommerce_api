@@ -2,12 +2,13 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as third_filters
 from rest_framework import generics, filters, status
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
+from app_account.models import LikedProduct
 from app_store.filters import ProductFilter
-from app_store.models import Product, Category, Brand, Comment
+from app_store.models import Product, Category, Brand, Comment, LikedComment
 from app_store.serializers import ProductListSerializer, ProductSerializer, CommentSerializer
 
 
@@ -69,6 +70,30 @@ class ProductComment(generics.ListCreateAPIView):
         product_id = self.kwargs.get('product_id')
         queryset = Comment.objects.filter(status='p', product__product_id=product_id)
         return queryset
+
+
+@permission_classes([IsAuthenticated])
+def like_product(request, product_id):
+    product = get_object_or_404(Product, product_id=product_id)
+    try:
+        like = LikedProduct.objects.get(product__product_id=product_id, user=request.user)
+        like.delete()
+        return JsonResponse({'like': False})
+    except:
+        LikedProduct.objects.create(user=request.user, product=product)
+        return JsonResponse({'like': True})
+
+
+@permission_classes([IsAuthenticated])
+def like_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    try:
+        like = LikedComment.objects.get(comment=comment, user=request.user)
+        like.delete()
+        return JsonResponse({'like': False})
+    except:
+        LikedComment.objects.create(user=request.user, comment=comment)
+        return JsonResponse({'like': True})
 
 
 @api_view(['GET'])
