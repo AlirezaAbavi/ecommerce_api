@@ -2,6 +2,7 @@ import datetime
 
 from django.conf import settings
 from django.http import HttpResponseForbidden
+from pytz import utc
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
