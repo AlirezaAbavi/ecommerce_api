@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from app_account.models import CartItem, Order, Address
 from app_account.serializers import CartSerializer, CreateItemSerializer, EditItemSerializer, OrderListSerializer, \
-    OrderCreateSerializer
+    OrderCreateSerializer, OrderDetailSerializer, AddressSerializer
 
 
 # Create your views here.
@@ -75,3 +75,13 @@ class AddressList(generics.ListCreateAPIView):
 class AddressDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AddressSerializer
     lookup_field = 'id'
+
+
+class OrderDetail(generics.RetrieveAPIView):
+    serializer_class = OrderDetailSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'order_id'
+
+    def get_queryset(self):
+        queryset = Order.objects.filter(user=self.request.user)
+        return queryset
