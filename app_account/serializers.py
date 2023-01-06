@@ -108,3 +108,24 @@ class OrderListSerializer(serializers.ModelSerializer):
             'url',
             'thumbnails',
         ]
+
+
+class OrderCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Order
+        fields = [
+            'user',
+            'address',
+        ]
+
+    def create(self, validated_data):
+        order = Order.objects.create(**validated_data)
+        items = CartItem.objects.filter(user=order.user)
+        for item in items:
+            item.user = None
+            item.order = order
+            item.save()
+        order.save()
+        return order

@@ -1,11 +1,13 @@
 import datetime
 
 from django.conf import settings
+from django.http import HttpResponseForbidden
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from app_account.models import CartItem, Order
-from app_account.serializers import CartSerializer, CreateItemSerializer, EditItemSerializer, OrderListSerializer
+from app_account.serializers import CartSerializer, CreateItemSerializer, EditItemSerializer, OrderListSerializer, \
+    OrderCreateSerializer
 
 
 # Create your views here.
@@ -47,3 +49,15 @@ class OrderList(generics.ListAPIView):
                     order.delete()
         queryset = Order.objects.filter(user=self.request.user)
         return queryset
+
+
+class OrderCreate(generics.CreateAPIView):
+    serializer_class = OrderCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if CartItem.objects.filter(user=self.request.user).count() > 0:
+            queryset = Order.objects.filter(user=self.request.user)
+            return queryset
+        else:
+            raise HttpResponseForbidden
