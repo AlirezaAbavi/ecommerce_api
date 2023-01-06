@@ -1,8 +1,11 @@
+import datetime
+
+from django.conf import settings
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from app_account.models import CartItem
-from app_account.serializers import CartSerializer, CreateItemSerializer, EditItemSerializer
+from app_account.models import CartItem, Order
+from app_account.serializers import CartSerializer, CreateItemSerializer, EditItemSerializer, OrderListSerializer
 
 
 # Create your views here.
@@ -27,4 +30,20 @@ class EditCart(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         queryset = CartItem.objects.filter(user=self.request.user)
+        return queryset
+
+
+class OrderList(generics.ListAPIView):
+    serializer_class = OrderListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        orders = Order.objects.filter(user=self.request.user)
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        for order in orders:
+            if order.status == 0:
+                diff = now - order.created_at
+                if diff.seconds >= settings.ORDER_EXPIRY_TIME:
+                    order.delete()
+        queryset = Order.objects.filter(user=self.request.user)
         return queryset

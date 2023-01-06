@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from app_store.models import Product, Quantity
-from .models import CartItem
+from .models import CartItem, Order
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -79,3 +79,32 @@ class EditItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['number']
+
+
+class OrderListSerializer(serializers.ModelSerializer):
+    def get_thumbnails(self, obj):
+        return CartItem.objects.filter(order=obj).values('product__thumbnail')
+
+    def get_abs_url(self, obj):
+        request = self.context['request']
+        return request.build_absolute_uri(reverse('user:order-details', kwargs={'order_id': obj.order_id}))
+
+    order_id = serializers.ReadOnlyField()
+    created_at = serializers.ReadOnlyField()
+    number_of_products = serializers.ReadOnlyField()
+    total_price = serializers.ReadOnlyField()
+    status = serializers.ReadOnlyField()
+    url = serializers.SerializerMethodField('get_abs_url')
+    thumbnails = serializers.SerializerMethodField('get_thumbnails')
+
+    class Meta:
+        model = Order
+        fields = [
+            'order_id',
+            'number_of_products',
+            'total_price',
+            'created_at',
+            'status',
+            'url',
+            'thumbnails',
+        ]
