@@ -17,7 +17,7 @@ class Cart(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = CartItem.objects.filter(user=self.request.user)
+        queryset = CartItem.objects.filter(user=self.request.user).order_by('created_at')
         return queryset
 
 

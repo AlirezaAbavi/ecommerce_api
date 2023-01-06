@@ -91,6 +91,7 @@ class CartItem(models.Model):
     quantity = models.ForeignKey('app_store.Quantity', on_delete=models.SET_NULL, null=True)
     number = models.PositiveIntegerField(default=1)
     price = models.FloatField(default=0.0)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def cart_price(self) -> float:
         return CartItem.objects.filter(user=self.user).aggregate(price=Sum("product__sell_price"))["price"] or 0
