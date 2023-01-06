@@ -220,7 +220,7 @@ class PopularBrandsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = [
-            'title'
+            'title',
             'image',
             'url',
         ]
