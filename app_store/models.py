@@ -102,7 +102,10 @@ class Product(models.Model):
 
     def save(self, **kwargs):
         self.total_rate = self.product_rate()
-        self.hits_count = self.hits.count() or 0
+        try:
+            self.hits_count = self.hits.count()
+        except:
+            self.hits_count = 0
         self.total_quantity = Quantity.objects.filter(product=self).aggregate(Sum('quantity'))['quantity__sum'] or 0
         if not self.status == 2:
             if self.total_quantity == 0:
