@@ -3,13 +3,14 @@ from decouple import config
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
+# SECURITY WARNING: Change this in production!
 ALLOWED_HOSTS = ['*']
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
+# run 'pip install mysqlclient'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
