@@ -20,7 +20,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from ecommerce_api import settings
+from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -28,8 +28,8 @@ schema_view = get_schema_view(
         default_version='v1',
         description="An e-commerce api developed using django(DRF)",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="BSD License"),
+        contact=openapi.Contact(email="abavi.alireza2002@gmail.com"),
+        license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
@@ -49,3 +49,4 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
