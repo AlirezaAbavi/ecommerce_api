@@ -6,8 +6,10 @@
 - Using JWT for authentication
 - Compliance with the principles of clean coding
 - Using view counter system
+- Using Mysql for db (can be changed)
 - Documented and visualized by Swagger & Redoc
-#### it's a Django project based on DRF for e-commerce websites
+#### It's a Django project based on DRF for e-commerce websites
+#### Tests will be completed over time
 - In terminal: `git clone https://github.com/AlirezaAbavi/ecommerce_api.git`
 - cd `/ecommerce_api` Where the manage.py is
 - In terminal: `python -m venv venv`
