@@ -1,2 +1,19 @@
-# ecommerce_api
-An e-commerce api developed using django framwork(DRF)
+# E-commerce API
+## a real world open source example of django-rest-framework (DRF)
+### Project is UP & Running on https://alirezaabavi.pythonanywhere.com/
+### some features:
+- Compliance with the principles of test writing DRF
+- Using JWT for authentication
+- Compliance with the principles of clean coding
+- Using view counter system
+- Documented and visualized by Swagger & Redoc
+#### it's a Django project based on DRF for e-commerce websites
+- In terminal: `git clone https://github.com/AlirezaAbavi/ecommerce_api.git`
+- cd `/ecommerce_api` Where the manage.py is
+- In terminal: `python -m venv venv`
+- activate your venv: in windows `cd venv\scripts\activate` in linux: `venv/bin/activate`
+- Run `pip install requirements.txt`
+- Run `python manage.py collectstatic`
+- Run `python manage.py runserver --settings=ecommerce_api.settings.dev`
+- Visit http://127.0.0.1:8000/swagger to watch the api documentation
+that`s it...
