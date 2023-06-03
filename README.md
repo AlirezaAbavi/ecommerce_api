@@ -1,5 +1,5 @@
 # E-commerce API
-## a real world open source example of django-rest-framework (DRF)
+## A real world open source example of django-rest-framework (DRF)
 ### Project is UP & Running on https://alirezaabavi.pythonanywhere.com/
 ### some features:
 - Compliance with the principles of test writing DRF
