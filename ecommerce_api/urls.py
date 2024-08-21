@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -35,7 +36,13 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
+
+def welcome_view(request):
+    return HttpResponse("Welcome!!")
+
+
 urlpatterns = [
+    path('', welcome_view),
     path('admin/', admin.site.urls),
     path('api/', include('dj_rest_auth.urls')),
     path('api/registration/', include('dj_rest_auth.registration.urls')),
