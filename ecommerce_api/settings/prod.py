@@ -3,10 +3,12 @@ from decouple import config
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG')
 
 # SECURITY WARNING: Change this in production!
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS')
+
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS')
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -18,7 +20,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT': 3306
+        'PORT': config('DB_PORT')
     }
 }
 
