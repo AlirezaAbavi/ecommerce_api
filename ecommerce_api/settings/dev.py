@@ -3,11 +3,20 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SECRET_KEY = 'z16g)!3_zx1ol9(%2!q0y_1iaq@%wmj6q(kotda&0mkjh+24c#'
+
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*'
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    # Add your front-end URL or any other URLs you want to allow
+]
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

@@ -5,17 +5,22 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
+SECRET_KEY = config('SECRET_KEY')
+
 # SECURITY WARNING: Change this in production!
 ALLOWED_HOSTS = config('ALLOWED_HOSTS')
 
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS')
+
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS')
+
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # run 'pip install mysqlclient'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': config('DB_ENGINE'),
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
